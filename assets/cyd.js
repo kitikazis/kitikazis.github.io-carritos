@@ -180,13 +180,16 @@
     // Mobile toggle
     const toggle = document.getElementById("nav-toggle");
     if (toggle && mm) {
-      toggle.addEventListener("click", () => {
-        const open = mm.classList.toggle("open");
+      const setMenu = (open) => {
+        mm.classList.toggle("open", open);
+        toggle.classList.toggle("open", open);
+        toggle.setAttribute("aria-expanded", open ? "true" : "false");
+        if (header) header.classList.toggle("solid", open || window.scrollY > 30 || document.body.classList.contains("has-page-hero"));
         document.body.style.overflow = open ? "hidden" : "";
-      });
-      mm.querySelectorAll("a").forEach(a => a.addEventListener("click", () => {
-        mm.classList.remove("open"); document.body.style.overflow = "";
-      }));
+      };
+      toggle.addEventListener("click", () => setMenu(!mm.classList.contains("open")));
+      mm.querySelectorAll("a").forEach(a => a.addEventListener("click", () => setMenu(false)));
+      window.addEventListener("keydown", (e) => { if (e.key === "Escape") setMenu(false); });
     }
 
     // Reveal on scroll (con red de seguridad robusta)
